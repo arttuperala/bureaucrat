@@ -55,8 +55,21 @@ jobs:
         with:
           name: release-${{ matrix.platform.target }}
           path: bureaucrat-*.zip
+
+  release:
+    name: Release
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          merge-multiple: true
       - name: Publish release
         uses: softprops/action-gh-release@v2
-        if: github.ref_type == 'tag'
         with:
           files: bureaucrat-*.zip
